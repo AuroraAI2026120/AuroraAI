@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AURORA</title>
+
+<style>
+body {
+    margin: 0;
+    background: #030812;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+.container {
+    padding: 25px;
+}
+
+.orb {
+    width: 150px;
+    height: 150px;
+    margin: 30px auto;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        white 0%,
+        #8eeaff 15%,
+        #28758f 40%,
+        #06111d 70%
+    );
+
+    box-shadow:
+        0 0 30px #64dcff,
+        0 0 80px #17617d;
+
+    animation: pulsar 2s infinite;
+}
+
+@keyframes pulsar {
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+h1 {
+    letter-spacing: 8px;
+}
+
+#status {
+    opacity: 0.7;
+}
+
+#chat {
+    margin-top: 25px;
+    padding: 15px;
+    background: #0b1725;
+    border-radius: 15px;
+    min-height: 150px;
+    text-align: left;
+}
+
+input {
+    width: 60%;
+    padding: 13px;
+    border-radius: 20px;
+    border: 1px solid #25465c;
+    background: #07121e;
+    color: white;
+}
+
+button {
+    padding: 13px 17px;
+    border: none;
+    border-radius: 20px;
+    background: #64dcff;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="orb"></div>
+
+<h1>AURORA</h1>
+
+<p id="status">
+Assistente pessoal online
+</p>
+
+<div id="chat">
+<b>AURORA:</b>
+Olá. Estou pronta para ajudar.
+</div>
+
+<br>
+
+<input
+id="mensagem"
+placeholder="Fale com a AURORA..."
+>
+
+<button onclick="enviar()">
+Enviar
+</button>
+
+<button onclick="ouvir()">
+🎙️
+</button>
+
+</div>
+
+<script>
+
+function falar(texto) {
+
+    let voz = new SpeechSynthesisUtterance(texto);
+
+    voz.lang = "pt-BR";
+
+    speechSynthesis.speak(voz);
+}
+
+function responder(texto) {
+
+    texto = texto.toLowerCase();
+
+    if (texto.includes("oi") ||
+        texto.includes("olá")) {
+
+        return "Olá! Como posso ajudar?";
+    }
+
+    if (texto.includes("seu nome")) {
+
+        return "Meu nome é AURORA.";
+    }
+
+    if (texto.includes("horas")) {
+
+        let hora =
+        new Date().toLocaleTimeString(
+        "pt-BR",
+        {
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+
+        return "Agora são " + hora;
+    }
+
+    if (texto.includes("data")) {
+
+        return "Hoje é " +
+        new Date().toLocaleDateString(
+        "pt-BR");
+    }
+
+    if (texto.includes("youtube")) {
+
+        window.open(
+        "https://youtube.com",
+        "_blank");
+
+        return "Abrindo o YouTube.";
+    }
+
+    if (texto.includes("google")) {
+
+        window.open(
+        "https://google.com",
+        "_blank");
+
+        return "Abrindo o Google.";
+    }
+
+    return "Ainda estou aprendendo. Em breve poderei conversar com você usando inteligência artificial.";
+}
+
+function enviar() {
+
+    let campo =
+    document.getElementById("mensagem");
+
+    let texto = campo.value;
+
+    if (texto === "") return;
+
+    document.getElementById("chat").innerHTML +=
+    "<br><br><b>Você:</b> " + texto;
+
+    let resposta = responder(texto);
+
+    document.getElementById("chat").innerHTML +=
+    "<br><br><b>AURORA:</b> " + resposta;
+
+    falar(resposta);
+
+    campo.value = "";
+}
+
+function ouvir() {
+
+    const Reconhecimento =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+    if (!Reconhecimento) {
+
+        alert(
+        "Seu navegador não suporta reconhecimento de voz."
+        );
+
+        return;
+    }
+
+    let reconhecimento =
+    new Reconhecimento();
+
+    reconhecimento.lang = "pt-BR";
+
+    document.getElementById("status").innerText =
+    "AURORA está ouvindo...";
+
+    reconhecimento.start();
+
+    reconhecimento.onresult =
+    function(event) {
+
+        let texto =
+        event.results[0][0].transcript;
+
+        document.getElementById(
+        "mensagem").value = texto;
+
+        enviar();
+    };
+
+    reconhecimento.onend =
+    function() {
+
+        document.getElementById(
+        "status").innerText =
+        "Assistente pessoal online";
+    };
+}
+
+</script>
+
+</body>
+</html>
